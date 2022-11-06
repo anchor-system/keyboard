@@ -62,7 +62,7 @@ class Visualizer:
     def __init__(self):
         self.fading_line = FadingLine()
         self.scale_factor = min(constants.WIDTH, constants.HEIGHT)/4
-        self.movement_speed_scale = 1/constants.BASE_NOTE_FREQUENCY * 1/5
+        self.movement_speed_scale = 1/constants.BASE_NOTE_FREQUENCY * 1/4
 
     def determine_visualization_function(self, active_notes):
 

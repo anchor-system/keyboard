@@ -33,7 +33,6 @@ def process_events(screen, font, midiout, events, keys_pressed):
             if keys_pressed[key]:
                 constants.ANCHOR_NOTE = i
 
-    screen.fill(pygame.Color("black"))
     notes.display_notes(screen, font, active_notes)
 
     text = font.render(f'{constants.ANCHOR_NOTE}*', True, (255, 255, 255))
@@ -41,7 +40,6 @@ def process_events(screen, font, midiout, events, keys_pressed):
     screen.blit(text, text_rect)
 
 
-    pygame.display.flip()
 
     return user_has_quit
 

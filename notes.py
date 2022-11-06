@@ -11,6 +11,10 @@ def notes_pressed(keys_pressed):
     return notes
 
 
+def note_to_frequency(note):
+    return 2 ** (note/12) * constants.BASE_NOTE_FREQUENCY
+
+
 def display_notes(screen, font, notes):
     notes = [n + keyboard_layout.NOTE_OFFSET for n in notes]
     for note in notes:
@@ -41,6 +45,11 @@ def display_notes(screen, font, notes):
 
 
 def note_to_midi(note):
+    """
+    zero gets mapped to middle C which is 60
+    :param note:
+    :return:
+    """
     return note + 60
 
 

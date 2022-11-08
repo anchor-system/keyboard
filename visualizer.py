@@ -7,18 +7,13 @@ import notes
 
 
 class Point:
-    def __init__(self, x, y, radius=3):
+    def __init__(self, x, y):
         self.translation_x = constants.WIDTH/2
         self.translation_y = constants.HEIGHT/2
 
         self.x = x + self.translation_x
         self.y = y + self.translation_y
 
-        self.radius = radius
-
-    def draw(self, screen, color):
-        rect = (self.x, self.y, self.radius, self.radius)
-        pygame.draw.ellipse(screen, color, rect)
 
 
 class FadingPoint(Point):
@@ -29,9 +24,6 @@ class FadingPoint(Point):
 
     def update(self):
         self.life -= 1
-
-    def draw(self, screen):
-        super(FadingPoint, self).draw(screen, pygame.Color(0, 255, 0, self.life))
 
 
 class FadingLine:

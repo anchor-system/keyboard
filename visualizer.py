@@ -1,86 +1,92 @@
 import math
 
+import numpy
+import scipy
+
+import functools
+
 import pygame
 
 import constants
+import helpers
 import notes
-
-
-class Point:
-    def __init__(self, x, y):
-        self.translation_x = constants.WIDTH/2
-        self.translation_y = constants.HEIGHT/2
-
-        self.x = x + self.translation_x
-        self.y = y + self.translation_y
-
-
-
-class FadingPoint(Point):
-    def __init__(self, x, y, life):
-        super(FadingPoint, self).__init__(x, y)
-        self.life = life
-        self.radius = 30
-
-    def update(self):
-        self.life -= 1
-
-
-class FadingLine:
-    def __init__(self):
-        self.life = 60
-        self.points = []
-
-    def add_point(self, x, y):
-        point = FadingPoint(x, y, self.life)
-        self.points.append(point)
-
-    def update(self):
-        to_be_deleted = []
-        for point in self.points:
-            point.update()
-            if point.life == 0:
-                to_be_deleted.append(point)
-
-        for point in to_be_deleted:
-            self.points.remove(point)
-
-    def draw(self, screen):
-        if len(self.points) >= 2:
-            pygame.draw.lines(screen, (0, 255, 0), False, [(p.x, p.y) for p in self.points])
 
 
 class Visualizer:
     def __init__(self):
-        self.fading_line = FadingLine()
         self.scale_factor = min(constants.WIDTH, constants.HEIGHT)/4
         self.movement_speed_scale = 1/constants.BASE_NOTE_FREQUENCY * 1/4
 
-    def determine_visualization_function(self, active_notes):
+    def num_notes_visualized_on_x_axis(self, active_notes):
+        return len(active_notes)//2 + 1
 
-        def f(t):
-            result = [0, 0]
+    def num_notes_visualized_on_y_axis(self, active_notes):
+        return len(active_notes)//2
 
+    def get_visualization_function(self, active_notes):
 
-            for i, note in enumerate(active_notes):
-                note_frequency = notes.note_to_frequency(note)
-                result[i % 2] += self.scale_factor * math.sin(note_frequency * t * self.movement_speed_scale)
+        # add in zero functions so reduce will work
+        x_components = [lambda x: 0]
+        y_components = [lambda x: 0]
 
-            return result
+        def add_functions(f, g):
+            return lambda t: f(t) + g(t)
 
-        return f
+        def multiply_function(f, a):
+            return lambda t: f(t) * a
 
-    def update(self, keys_pressed, frame_count):
+        def one_component_visualization_function(note_frequency):
+            return lambda t: self.scale_factor * math.sin(note_frequency * t * self.movement_speed_scale)
+
+        for i, note in enumerate(active_notes):
+
+            note_frequency = notes.note_to_frequency(note)
+
+            if i % 2 == 0:
+                chosen_component = x_components
+            else:
+                chosen_component = y_components
+
+            chosen_component.append(one_component_visualization_function(note_frequency))
+
+        x_component_sum = functools.reduce(add_functions, x_components)
+        y_component_sum = functools.reduce(add_functions, y_components)
+
+        x_scale = 1 / max(self.num_notes_visualized_on_x_axis(active_notes), 1)
+        y_scale = 1 / max(self.num_notes_visualized_on_y_axis(active_notes), 1)
+
+        x_component_final = multiply_function(x_component_sum, x_scale)
+        y_component_final = multiply_function(y_component_sum, y_scale)
+
+        return (x_component_final, y_component_final)
+
+    def get_arclength_of_function_from_a_to_b(self, f, g, a, b):
+        f_prime = lambda x: scipy.misc.derivative(f, x)
+        g_prime = lambda x: scipy.misc.derivative(g, x)
+
+        inner_function = lambda t: math.sqrt(f_prime(t) ** 2 + g_prime(t) ** 2)
+
+        return scipy.integrate.quad(inner_function, a, b)[0]
+
+    def sample_visualization_function(self, frame_count, active_notes):
+
+        interval_length = (2 * math.pi) * 5
+        interval = [frame_count, frame_count + interval_length]
+        (f, g) = self.get_visualization_function(active_notes)
+
+        num_points_to_sample = 1000
+
+        sampling_points = numpy.linspace(interval[0], interval[1], num_points_to_sample)
+        sampled_function_points = list(map(lambda t: (f(t), g(t)), sampling_points))
+
+        return sampled_function_points
+
+    def draw(self, screen, frame_count, keys_pressed):
         active_notes = notes.notes_pressed(keys_pressed)
-
-        visualization_function = self.determine_visualization_function(active_notes)
-        x, y = visualization_function(frame_count)
-
-        self.fading_line.add_point(x, y)
-        self.fading_line.update()
-
-    def draw(self, screen):
-        self.fading_line.draw(screen)
+        sampled_function_points = self.sample_visualization_function(frame_count, active_notes)
+        centered_points = list(map(helpers.center_point, sampled_function_points))
+        if len(centered_points) >= 2:
+            pygame.draw.lines(screen, (0, 255, 0), False, centered_points)
 
 
 

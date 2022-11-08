@@ -33,8 +33,7 @@ with midiout:
 
         user_has_quit = input.process_events(screen, font, midiout, pygame.event.get(), pygame.key.get_pressed())
 
-        # visualizer.update(pygame.key.get_pressed(), frame_count)
-        # visualizer.draw(screen)
+        visualizer.draw(screen, frame_count, pygame.key.get_pressed())
 
         frame_count += 1
 

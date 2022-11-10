@@ -15,16 +15,25 @@ def process_events(screen, font, midiout, events, keys_pressed):
     """
     user_has_quit = False
     for event in events:
-        match event.type:
-            case pygame.QUIT:
-                user_has_quit = True
-                pygame.quit()
-            case pygame.KEYDOWN:
-                if event.key in keyboard_layout.LAYOUT:
-                    notes.start_midi_note(midiout, event.key)
-            case pygame.KEYUP:
-                if event.key in keyboard_layout.LAYOUT:
-                    notes.end_midi_note(midiout, event.key)
+        if event.type == pygame.QUIT:
+            user_has_quit = True
+            pygame.quit()
+        elif event.type == pygame.KEYDOWN:
+            if event.key in keyboard_layout.LAYOUT:
+                notes.start_midi_note(midiout, event.key)
+        elif event.type == pygame.KEYUP:
+            if event.key in keyboard_layout.LAYOUT:
+                notes.end_midi_note(midiout, event.key)
+        # match event.type:
+        #     case pygame.QUIT:
+        #         user_has_quit = True
+        #         pygame.quit()
+        #     case pygame.KEYDOWN:
+        #         if event.key in keyboard_layout.LAYOUT:
+        #             notes.start_midi_note(midiout, event.key)
+        #     case pygame.KEYUP:
+        #         if event.key in keyboard_layout.LAYOUT:
+        #             notes.end_midi_note(midiout, event.key)
 
     active_notes = notes.notes_pressed(keys_pressed)
 

@@ -9,13 +9,17 @@ available_ports = midiout.get_ports()
 
 
 if available_ports:
-    midiout.open_port(0)
+    midiout.open_port(1)
 else:
     midiout.open_virtual_port("My virtual output")
 
 pygame.init()
 
-screen = pygame.display.set_mode((constants.WIDTH, constants.HEIGHT))
+# screen = pygame.display.set_mode((constants.WIDTH, constants.HEIGHT))
+screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+
+surface = pygame.display.get_surface() #get the surface of the current active display
+constants.WIDTH, constants.HEIGHT = size = surface.get_width(), surface.get_height()#create an array of surface.width and surface.height
 
 # draw text
 font = pygame.font.Font(None, 50)

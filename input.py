@@ -6,7 +6,8 @@ import constants
 
 def process_events(screen, font, midiout, events, keys_pressed):
     """
-    process events from the user. Returns if the user has quit the program
+    process events from the user. Returns True if it has successfully
+    processed the events and the user hasn't quit.
 
     :param midiout:
     :param events:
@@ -42,13 +43,13 @@ def process_events(screen, font, midiout, events, keys_pressed):
             if keys_pressed[key]:
                 constants.ANCHOR_NOTE = i
 
-    notes.display_notes(screen, font, active_notes)
+    # notes.display_notes(screen, font, active_notes)
 
-    text = font.render(f'{constants.ANCHOR_NOTE}*', True, (255, 255, 255))
-    text_rect = text.get_rect(center=(constants.WIDTH/10, constants.HEIGHT/10))
-    screen.blit(text, text_rect)
+    # text = font.render(f'{constants.ANCHOR_NOTE}*', True, (255, 255, 255))
+    # text_rect = text.get_rect(center=(constants.WIDTH/10, constants.HEIGHT/10))
+    # screen.blit(text, text_rect)
 
 
 
-    return user_has_quit
+    return not user_has_quit
 

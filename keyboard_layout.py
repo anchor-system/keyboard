@@ -1,5 +1,6 @@
 import pygame
 ESCAPE_AND_CAPS_SWAPPED = True
+ESCAPE_AND_CAPS_SWAPPED = False
 
 # We want Caps Lock to be our starting point, so we'll map Caps Lock to 0, then we'll use
 # distance to caps lock to produce an offset to the note C4.

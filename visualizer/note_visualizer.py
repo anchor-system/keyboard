@@ -11,7 +11,7 @@ import helpers
 import notes
 
 
-class Visualizer:
+class NoteVisualizer:
     def __init__(self):
         self.scale_factor_x = constants.WIDTH/4
         self.scale_factor_y = constants.HEIGHT/4

@@ -22,9 +22,8 @@ class Instrument:
         self.midiout = self.initialize_midi()
 
         self.pressed_keys = []
-        self.suspended_keys_pressed = []
-
-        self.keys_are_suspended = False
+        self.sustained_keys = []
+        self.sustain_activated = False
 
         if graphical_mode:
 
@@ -81,8 +80,38 @@ class Instrument:
 
          del self.midiout
 
+    # todo implement mute and sustain
+    # also volume and stuff.
+    def process_key_down(self, key, midiout, keys_pressed):
+        if key == pygame.K_SPACE:
 
-    def process_events(self,screen, font, midiout, events, keys_pressed):
+            if not self.sustain_activated:
+                self.suspended_keys_pressed = keys_pressed
+            else:
+                for key in keyboard_layout.LAYOUT:
+                    if self.suspended_keys_pressed[key]:
+                        notes.end_midi_note(midiout, key)
+
+            self.sustain_activated = not self.sustain_activated
+
+        if key in keyboard_layout.LAYOUT:
+            notes.start_midi_note(midiout, key)
+
+    def process_key_up(self, key: pygame.key, midiout) -> None:
+        if key in keyboard_layout.LAYOUT:
+            if self.sustain_activated:
+                if not self.suspended_keys_pressed[key]:
+                    notes.end_midi_note(midiout, key)
+            else:
+                notes.end_midi_note(midiout, key)
+
+    def process_transposition(self, keys_pressed) -> None:
+        if keys_pressed[pygame.K_SPACE]:
+            for i, key in enumerate(keyboard_layout.ESCAPE_ROW):
+                if keys_pressed[key]:
+                    constants.ANCHOR_NOTE = i
+
+    def process_events(self, screen, font, midiout, events, keys_pressed):
         user_has_quit = False
         for event in events:
             if event.type == pygame.QUIT:
@@ -90,41 +119,18 @@ class Instrument:
                 pygame.quit()
             elif event.type == pygame.KEYDOWN:
 
-                print(event.key)
-
-                if event.key == pygame.K_SPACE:
-
-                    if not self.keys_are_suspended:
-                        self.suspended_keys_pressed = keys_pressed
-                    else:
-                        for key in keyboard_layout.LAYOUT:
-                            if self.suspended_keys_pressed[key]:
-                                notes.end_midi_note(midiout, key)
-
-                    self.keys_are_suspended = not self.keys_are_suspended
-
-                if event.key in keyboard_layout.LAYOUT:
-                    notes.start_midi_note(midiout, event.key)
-
+                self.process_key_down(event.key, midiout, keys_pressed)
 
             elif event.type == pygame.KEYUP:
 
-                if event.key in keyboard_layout.LAYOUT:
-                    if self.keys_are_suspended:
-                        if not self.suspended_keys_pressed[event.key]:
-                            notes.end_midi_note(midiout, event.key)
-                    else:
-                        notes.end_midi_note(midiout, event.key)
+                self.process_key_up(event.key, midiout)
 
 
-        # active_notes = notes.notes_pressed(keys_pressed)
+        self.process_transposition(keys_pressed)
 
-        if keys_pressed[pygame.K_SPACE]:
-            # Suspend
-            # Transposition
-            for i, key in enumerate(keyboard_layout.ESCAPE_ROW):
-                if keys_pressed[key]:
-                    constants.ANCHOR_NOTE = i
+
+
+
 
         # notes.display_notes(screen, font, active_notes)
 

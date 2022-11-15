@@ -59,6 +59,19 @@ def get_note_from_key(key_pressed):
     return note
 
 
+NOTE_ON_STATUS_BYTE = 0x90
+NOTE_OFF_STATUS_BYTE = 0x80
+CONTROL_CHANGES_BYTE = 0xb0
+SUSTAIN_PEDAL_STATUS_NUMBER = 64
+def enable_sustain(midiout):
+    midi_message = [CONTROL_CHANGES_BYTE, SUSTAIN_PEDAL_STATUS_NUMBER, 127]
+    midiout.send_message(midi_message)
+
+def disable_sustain(midiout):
+    midi_message = [CONTROL_CHANGES_BYTE, SUSTAIN_PEDAL_STATUS_NUMBER, 0]
+    midiout.send_message(midi_message)
+
+
 def start_midi_note(midiout, key_pressed):
     note = get_note_from_key(key_pressed)
     midi_note_on = [0x90, note_to_midi(note), 112]

@@ -22,8 +22,9 @@ class Instrument:
         self.midiout = self.initialize_midi()
 
         self.pressed_keys = []
-        self.sustained_keys = []
-        self.sustain_activated = False
+
+        self.command_started = False
+        self.command_key = pygame.K_SPACE
 
         if graphical_mode:
 
@@ -83,27 +84,34 @@ class Instrument:
     # todo implement mute and sustain
     # also volume and stuff.
     def process_key_down(self, key, midiout, keys_pressed):
-        if key == pygame.K_SPACE:
-
-            if not self.sustain_activated:
-                self.suspended_keys_pressed = keys_pressed
-            else:
-                for key in keyboard_layout.LAYOUT:
-                    if self.suspended_keys_pressed[key]:
-                        notes.end_midi_note(midiout, key)
-
-            self.sustain_activated = not self.sustain_activated
-
         if key in keyboard_layout.LAYOUT:
             notes.start_midi_note(midiout, key)
 
+    def process_commands(self, midiout, keys_pressed):
+        def all_pressed(keys):
+            return all(keys_pressed[key] for key in keys)
+
+        if keys_pressed[self.command_key]:
+            self.command_started = True
+
+
+        # transposition
+        if all_pressed([self.command_key, pygame.K_t]):
+            for i, key in enumerate(keyboard_layout.ESCAPE_ROW):
+                if keys_pressed[key]:
+                    constants.ANCHOR_NOTE = i
+        elif all_pressed([self.command_key, pygame.K_s]):
+            notes.enable_sustain(midiout)
+        elif all_pressed([self.command_key, pygame.K_m]):
+            notes.disable_sustain(midiout)
+
+
+
+
     def process_key_up(self, key: pygame.key, midiout) -> None:
-        if key in keyboard_layout.LAYOUT:
-            if self.sustain_activated:
-                if not self.suspended_keys_pressed[key]:
-                    notes.end_midi_note(midiout, key)
-            else:
-                notes.end_midi_note(midiout, key)
+
+         if key in keyboard_layout.LAYOUT:
+            notes.end_midi_note(midiout, key)
 
     def process_transposition(self, keys_pressed) -> None:
         if keys_pressed[pygame.K_SPACE]:
@@ -119,14 +127,14 @@ class Instrument:
                 pygame.quit()
             elif event.type == pygame.KEYDOWN:
 
-                self.process_key_down(event.key, midiout, keys_pressed)
+                    self.process_key_down(event.key, midiout, keys_pressed)
 
             elif event.type == pygame.KEYUP:
 
                 self.process_key_up(event.key, midiout)
 
-
-        self.process_transposition(keys_pressed)
+        command_completed = self.process_commands(midiout, keys_pressed)
+        # self.process_transposition(keys_pressed)
 
 
 

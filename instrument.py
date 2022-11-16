@@ -41,7 +41,7 @@ class Instrument:
             surface = pygame.display.get_surface() #get the surface of the current active display
             constants.WIDTH, constants.HEIGHT = surface.get_width(), surface.get_height()#create an array of surface.width and surface.height
 
-            self.graphical_mode = False
+            self.graphical_mode = True
 
         # self.instrument_visualizer = InstrumentVisualizer
         self.note_visualizer = NoteVisualizer()
@@ -135,9 +135,6 @@ class Instrument:
 
         command_completed = self.process_commands(midiout, keys_pressed)
         # self.process_transposition(keys_pressed)
-
-
-
 
 
         # notes.display_notes(screen, font, active_notes)

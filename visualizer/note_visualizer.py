@@ -36,7 +36,7 @@ class NoteVisualizer:
             return lambda t: f(t) * a
 
         def one_component_visualization_function(note_frequency, x_axis):
-            return lambda t: (self.scale_factor_x if x_axis else self.scale_factor_y) * math.sin(note_frequency * t * self.movement_speed_scale)
+           return lambda t: (self.scale_factor_x if x_axis else self.scale_factor_y) * math.sin(note_frequency * t * self.movement_speed_scale)
 
         for i, note in enumerate(active_notes):
 
@@ -83,9 +83,8 @@ class NoteVisualizer:
 
         return sampled_function_points
 
-    def draw(self, screen, frame_count, keys_pressed):
-        active_notes = notes.notes_pressed(keys_pressed)
-        sampled_function_points = self.sample_visualization_function(frame_count, active_notes)
+    def draw(self, screen, frame_count, notes_pressed):
+        sampled_function_points = self.sample_visualization_function(frame_count, notes_pressed)
         centered_points = list(map(helpers.center_point, sampled_function_points))
         if len(centered_points) >= 2:
             pygame.draw.lines(screen, (0, 255, 0), False, centered_points)

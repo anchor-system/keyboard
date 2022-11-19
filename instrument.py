@@ -2,8 +2,9 @@ import pygame
 import rtmidi
 import constants
 import input
-import keyboard_layout
+import keyboard
 import notes
+from visualizer.instrument_visualizer import InstrumentVisualizer
 
 from visualizer.note_visualizer import NoteVisualizer
 
@@ -36,14 +37,13 @@ class Instrument:
                 self.screen = pygame.display.set_mode((400, 400))
 
 
-            self.font = pygame.font.Font(None, 50)
 
             surface = pygame.display.get_surface() #get the surface of the current active display
             constants.WIDTH, constants.HEIGHT = surface.get_width(), surface.get_height()#create an array of surface.width and surface.height
 
             self.graphical_mode = True
 
-        # self.instrument_visualizer = InstrumentVisualizer
+        self.instrument_visualizer = InstrumentVisualizer()
         self.note_visualizer = NoteVisualizer()
 
     def initialize_midi(self):
@@ -63,28 +63,34 @@ class Instrument:
         return midiout
 
     def start_playing(self):
-         playing = True
-         with self.midiout:
-             while playing:
-                 current_time = pygame.time.get_ticks()
+        playing = True
+        with self.midiout:
+            while playing:
+                current_time = pygame.time.get_ticks()
 
-                 if self.graphical_mode:
-                     self.screen.fill(pygame.Color("black"))
-                     self.note_visualizer.draw(self.screen, self.frame_count, pygame.key.get_pressed())
+                keys_pressed = pygame.key.get_pressed()
+                notes_pressed = keyboard.notes_pressed(keys_pressed)
 
-                 playing = self.process_events(self.screen, self.font, self.midiout, pygame.event.get(), pygame.key.get_pressed())
+                playing = self.process_events(self.midiout, pygame.event.get(), keys_pressed)
 
-                 self.frame_count += 1
+                if self.graphical_mode:
+                    self.visualize(notes_pressed)
+                    pygame.display.flip()
 
-                 if self.graphical_mode:
-                     pygame.display.flip()
+                self.frame_count += 1
 
-         del self.midiout
+        del self.midiout
 
-    # todo implement mute and sustain
+    def visualize(self, notes_pressed):
+        anchor_intervals_pressed = notes.notes_to_anchor_intervals(constants.ANCHOR_NOTE, notes_pressed)
+        self.screen.fill(pygame.Color("black"))
+        self.note_visualizer.draw(self.screen, self.frame_count, notes_pressed)
+        self.instrument_visualizer.display_anchor_intervals(self.screen, anchor_intervals_pressed)
+        self.instrument_visualizer.display_anchor_note(self.screen)
+
     # also volume and stuff.
-    def process_key_down(self, key, midiout, keys_pressed):
-        if key in keyboard_layout.LAYOUT:
+    def process_key_down(self, key, midiout):
+        if key in keyboard.LAYOUT:
             notes.start_midi_note(midiout, key)
 
     def process_commands(self, midiout, keys_pressed):
@@ -97,7 +103,7 @@ class Instrument:
 
         # transposition
         if all_pressed([self.command_key, pygame.K_t]):
-            for i, key in enumerate(keyboard_layout.ESCAPE_ROW):
+            for i, key in enumerate(keyboard.ESCAPE_ROW):
                 if keys_pressed[key]:
                     constants.ANCHOR_NOTE = i
         elif all_pressed([self.command_key, pygame.K_s]):
@@ -106,42 +112,31 @@ class Instrument:
             notes.disable_sustain(midiout)
 
 
-
-
     def process_key_up(self, key: pygame.key, midiout) -> None:
 
-         if key in keyboard_layout.LAYOUT:
+         if key in keyboard.LAYOUT:
             notes.end_midi_note(midiout, key)
 
     def process_transposition(self, keys_pressed) -> None:
         if keys_pressed[pygame.K_SPACE]:
-            for i, key in enumerate(keyboard_layout.ESCAPE_ROW):
+            for i, key in enumerate(keyboard.ESCAPE_ROW):
                 if keys_pressed[key]:
                     constants.ANCHOR_NOTE = i
 
-    def process_events(self, screen, font, midiout, events, keys_pressed):
+    def process_events(self, midiout, events, keys_pressed):
         user_has_quit = False
         for event in events:
             if event.type == pygame.QUIT:
                 user_has_quit = True
                 pygame.quit()
             elif event.type == pygame.KEYDOWN:
-
-                    self.process_key_down(event.key, midiout, keys_pressed)
+                if not keys_pressed[self.command_key]:
+                    self.process_key_down(event.key, midiout)
 
             elif event.type == pygame.KEYUP:
-
-                self.process_key_up(event.key, midiout)
+                if not keys_pressed[self.command_key]:
+                    self.process_key_up(event.key, midiout)
 
         command_completed = self.process_commands(midiout, keys_pressed)
-        # self.process_transposition(keys_pressed)
-
-
-        # notes.display_notes(screen, font, active_notes)
-
-        # text = font.render(f'{constants.ANCHOR_NOTE}*', True, (255, 255, 255))
-        # text_rect = text.get_rect(center=(constants.WIDTH/10, constants.HEIGHT/10))
-        # screen.blit(text, text_rect)
-
 
         return not user_has_quit

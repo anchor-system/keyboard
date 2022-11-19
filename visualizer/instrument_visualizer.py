@@ -1,13 +1,14 @@
 import constants
 import pygame
 
+
 class InstrumentVisualizer:
     def __init__(self):
         self.font = pygame.font.Font(None, 50)
 
     def display_anchor_note(self, screen):
-        text = self.font.render(f'{constants.ANCHOR_NOTE}*', True, (255, 255, 255))
-        text_rect = text.get_rect(center=(constants.WIDTH/10, constants.HEIGHT/10))
+        text = self.font.render(f"{constants.ANCHOR_NOTE}*", True, (255, 255, 255))
+        text_rect = text.get_rect(center=(constants.WIDTH / 10, constants.HEIGHT / 10))
         screen.blit(text, text_rect)
 
     def offset_interval_so_left_is_zero(self, anchor_interval):
@@ -23,9 +24,14 @@ class InstrumentVisualizer:
 
             octave_notation = ("'" if octave >= 0 else ",") * abs(octave)
 
-            text = self.font.render(f'{octave_position}{octave_notation}', True, (255, 255, 255))
+            text = self.font.render(
+                f"{octave_position}{octave_notation}", True, (255, 255, 255)
+            )
 
-            text_position = (50 + octave_position * 50, 150 + (constants.NUM_OCTAVES - octave) * 50)
+            text_position = (
+                50 + octave_position * 50,
+                150 + (constants.NUM_OCTAVES - octave) * 50,
+            )
 
             text_rect = text.get_rect(center=text_position)
             screen.blit(text, text_rect)

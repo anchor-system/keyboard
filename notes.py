@@ -32,6 +32,7 @@ def notes_to_anchor_intervals(anchor_note: int, notes: List[int]) -> List[int]:
     """
     return [note_to_anchor_interval(anchor_note, note) for note in notes]
 
+
 def note_to_anchor_interval(anchor_note: int, note: int) -> int:
     """
     Given a note, and an anchor note, return the notes anchor interval
@@ -52,35 +53,37 @@ def notes_pressed(keys_pressed):
 
 
 def note_to_frequency(note):
-    return 2 ** (note/12) * constants.BASE_NOTE_FREQUENCY
+    return 2 ** (note / 12) * constants.BASE_NOTE_FREQUENCY
 
 
 def display_notes(screen, font, notes):
-    note_grid = [[' ' for _ in constants.NUM_NOTES] for _ in constants.NUM_OCTAVES]
+    note_grid = [[" " for _ in constants.NUM_NOTES] for _ in constants.NUM_OCTAVES]
 
 
 def display_notes_old(screen, font, notes):
-    note_grid = [[' ' for _ in constants.NUM_NOTES] for _ in constants.NUM_OCTAVES]
+    note_grid = [[" " for _ in constants.NUM_NOTES] for _ in constants.NUM_OCTAVES]
     notes = [n + keyboard.NOTE_OFFSET for n in notes]
     for note in notes:
         absolute_octave, absolute_note = divmod(note, constants.NUM_NOTES)
-        anchored_octave, anchored_note = divmod(note - keyboard.NOTE_OFFSET, constants.NUM_NOTES)
+        anchored_octave, anchored_note = divmod(
+            note - keyboard.NOTE_OFFSET, constants.NUM_NOTES
+        )
 
         r_x = (r_x - constants.ANCHOR_NOTE) % constants.NUM_NOTES
         r_s = (r_s - constants.ANCHOR_NOTE) % constants.NUM_NOTES
 
         octave = ("'" if q_s >= 0 else ",") * abs(q_s)
 
-        text = font.render(f'{r_s}{octave}', True, (255, 255, 255))
+        text = font.render(f"{r_s}{octave}", True, (255, 255, 255))
 
         text_position = (50 + r_x * 50, 150 + (constants.NUM_OCTAVES - q_y) * 50)
 
         text_rect = text.get_rect(center=text_position)
         screen.blit(text, text_rect)
 
-        note_grid[q][r] = f'{r}{octave}'
+        note_grid[q][r] = f"{r}{octave}"
 
-        s += f'{r}{octave} '
+        s += f"{r}{octave} "
 
     note_table = helpers.two_dimensional_list_to_string(note_grid)
     #
@@ -106,11 +109,14 @@ def get_note_from_key(key_pressed):
 
 NOTE_ON_STATUS_BYTE = 0x90
 NOTE_OFF_STATUS_BYTE = 0x80
-CONTROL_CHANGES_BYTE = 0xb0
+CONTROL_CHANGES_BYTE = 0xB0
 SUSTAIN_PEDAL_STATUS_NUMBER = 64
+
+
 def enable_sustain(midiout):
     midi_message = [CONTROL_CHANGES_BYTE, SUSTAIN_PEDAL_STATUS_NUMBER, 127]
     midiout.send_message(midi_message)
+
 
 def disable_sustain(midiout):
     midi_message = [CONTROL_CHANGES_BYTE, SUSTAIN_PEDAL_STATUS_NUMBER, 0]
@@ -127,5 +133,3 @@ def end_midi_note(midiout, key_pressed):
     note = get_note_from_key(key_pressed)
     midi_note_off = [0x80, note_to_midi(note), 0]
     midiout.send_message(midi_note_off)
-
-

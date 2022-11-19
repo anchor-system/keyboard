@@ -39,7 +39,4 @@ def process_events(screen, font, midiout, events, keys_pressed):
     # text_rect = text.get_rect(center=(constants.WIDTH/10, constants.HEIGHT/10))
     # screen.blit(text, text_rect)
 
-
-
     return not user_has_quit
-

@@ -15,6 +15,7 @@ class Instrument:
     An instrument is a device which takes in inputs from a user, and represents that information
     mainly through audio but optionally visually as well
     """
+
     def __init__(self, graphical_mode: bool, fullscreen: bool):
 
         pygame.init()
@@ -36,10 +37,13 @@ class Instrument:
             else:
                 self.screen = pygame.display.set_mode((400, 400))
 
-
-
-            surface = pygame.display.get_surface() #get the surface of the current active display
-            constants.WIDTH, constants.HEIGHT = surface.get_width(), surface.get_height()#create an array of surface.width and surface.height
+            surface = (
+                pygame.display.get_surface()
+            )  # get the surface of the current active display
+            constants.WIDTH, constants.HEIGHT = (
+                surface.get_width(),
+                surface.get_height(),
+            )  # create an array of surface.width and surface.height
 
             self.graphical_mode = True
 
@@ -71,7 +75,9 @@ class Instrument:
                 keys_pressed = pygame.key.get_pressed()
                 notes_pressed = keyboard.notes_pressed(keys_pressed)
 
-                playing = self.process_events(self.midiout, pygame.event.get(), keys_pressed)
+                playing = self.process_events(
+                    self.midiout, pygame.event.get(), keys_pressed
+                )
 
                 if self.graphical_mode:
                     self.visualize(notes_pressed)
@@ -82,10 +88,14 @@ class Instrument:
         del self.midiout
 
     def visualize(self, notes_pressed):
-        anchor_intervals_pressed = notes.notes_to_anchor_intervals(constants.ANCHOR_NOTE, notes_pressed)
+        anchor_intervals_pressed = notes.notes_to_anchor_intervals(
+            constants.ANCHOR_NOTE, notes_pressed
+        )
         self.screen.fill(pygame.Color("black"))
         self.note_visualizer.draw(self.screen, self.frame_count, notes_pressed)
-        self.instrument_visualizer.display_anchor_intervals(self.screen, anchor_intervals_pressed)
+        self.instrument_visualizer.display_anchor_intervals(
+            self.screen, anchor_intervals_pressed
+        )
         self.instrument_visualizer.display_anchor_note(self.screen)
 
     # also volume and stuff.
@@ -100,7 +110,6 @@ class Instrument:
         if keys_pressed[self.command_key]:
             self.command_started = True
 
-
         # transposition
         if all_pressed([self.command_key, pygame.K_t]):
             for i, key in enumerate(keyboard.ESCAPE_ROW):
@@ -111,10 +120,9 @@ class Instrument:
         elif all_pressed([self.command_key, pygame.K_m]):
             notes.disable_sustain(midiout)
 
-
     def process_key_up(self, key: pygame.key, midiout) -> None:
 
-         if key in keyboard.LAYOUT:
+        if key in keyboard.LAYOUT:
             notes.end_midi_note(midiout, key)
 
     def process_transposition(self, keys_pressed) -> None:

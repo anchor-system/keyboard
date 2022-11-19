@@ -1,6 +1,7 @@
 import math
 
 import numpy
+
 #
 import functools
 
@@ -13,15 +14,15 @@ import notes
 
 class NoteVisualizer:
     def __init__(self):
-        self.scale_factor_x = constants.WIDTH/4
-        self.scale_factor_y = constants.HEIGHT/4
-        self.movement_speed_scale = 1/constants.BASE_NOTE_FREQUENCY * 1/4
+        self.scale_factor_x = constants.WIDTH / 4
+        self.scale_factor_y = constants.HEIGHT / 4
+        self.movement_speed_scale = 1 / constants.BASE_NOTE_FREQUENCY * 1 / 4
 
     def num_notes_visualized_on_x_axis(self, active_notes):
-        return len(active_notes)//2 + 1
+        return len(active_notes) // 2 + 1
 
     def num_notes_visualized_on_y_axis(self, active_notes):
-        return len(active_notes)//2
+        return len(active_notes) // 2
 
     def get_visualization_function(self, active_notes):
 
@@ -36,7 +37,9 @@ class NoteVisualizer:
             return lambda t: f(t) * a
 
         def one_component_visualization_function(note_frequency, x_axis):
-           return lambda t: (self.scale_factor_x if x_axis else self.scale_factor_y) * math.sin(note_frequency * t * self.movement_speed_scale)
+            return lambda t: (
+                self.scale_factor_x if x_axis else self.scale_factor_y
+            ) * math.sin(note_frequency * t * self.movement_speed_scale)
 
         for i, note in enumerate(active_notes):
 
@@ -49,7 +52,9 @@ class NoteVisualizer:
             else:
                 chosen_component = y_components
 
-            chosen_component.append(one_component_visualization_function(note_frequency, working_on_x_axis))
+            chosen_component.append(
+                one_component_visualization_function(note_frequency, working_on_x_axis)
+            )
 
         x_component_sum = functools.reduce(add_functions, x_components)
         y_component_sum = functools.reduce(add_functions, y_components)
@@ -63,12 +68,12 @@ class NoteVisualizer:
         return (x_component_final, y_component_final)
 
     # def get_arclength_of_function_from_a_to_b(self, f, g, a, b):
-        # f_prime = lambda x: scipy.misc.derivative(f, x)
-        # g_prime = lambda x: scipy.misc.derivative(g, x)
-        #
-        # inner_function = lambda t: math.sqrt(f_prime(t) ** 2 + g_prime(t) ** 2)
-        #
-        # return scipy.integrate.quad(inner_function, a, b)[0]
+    # f_prime = lambda x: scipy.misc.derivative(f, x)
+    # g_prime = lambda x: scipy.misc.derivative(g, x)
+    #
+    # inner_function = lambda t: math.sqrt(f_prime(t) ** 2 + g_prime(t) ** 2)
+    #
+    # return scipy.integrate.quad(inner_function, a, b)[0]
 
     def sample_visualization_function(self, frame_count, active_notes):
 
@@ -84,11 +89,9 @@ class NoteVisualizer:
         return sampled_function_points
 
     def draw(self, screen, frame_count, notes_pressed):
-        sampled_function_points = self.sample_visualization_function(frame_count, notes_pressed)
+        sampled_function_points = self.sample_visualization_function(
+            frame_count, notes_pressed
+        )
         centered_points = list(map(helpers.center_point, sampled_function_points))
         if len(centered_points) >= 2:
             pygame.draw.lines(screen, (0, 255, 0), False, centered_points)
-
-
-
-

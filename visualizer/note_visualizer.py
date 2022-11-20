@@ -2,14 +2,13 @@ import math
 
 import numpy
 
-#
 import functools
 
 import pygame
 
 import constants
 import helpers
-import notes
+from anchor import notes
 
 
 class NoteVisualizer:
@@ -42,9 +41,7 @@ class NoteVisualizer:
             ) * math.sin(note_frequency * t * self.movement_speed_scale)
 
         for i, note in enumerate(active_notes):
-
             note_frequency = notes.note_to_frequency(note)
-
             working_on_x_axis = i % 2 == 0
 
             if working_on_x_axis:
@@ -66,14 +63,6 @@ class NoteVisualizer:
         y_component_final = multiply_function(y_component_sum, y_scale)
 
         return (x_component_final, y_component_final)
-
-    # def get_arclength_of_function_from_a_to_b(self, f, g, a, b):
-    # f_prime = lambda x: scipy.misc.derivative(f, x)
-    # g_prime = lambda x: scipy.misc.derivative(g, x)
-    #
-    # inner_function = lambda t: math.sqrt(f_prime(t) ** 2 + g_prime(t) ** 2)
-    #
-    # return scipy.integrate.quad(inner_function, a, b)[0]
 
     def sample_visualization_function(self, frame_count, active_notes):
 

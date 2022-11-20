@@ -1,9 +1,9 @@
 import pygame
 import rtmidi
 import constants
-import input
 import keyboard
-import notes
+import midi
+from anchor import notes
 from visualizer.instrument_visualizer import InstrumentVisualizer
 
 from visualizer.note_visualizer import NoteVisualizer
@@ -32,7 +32,7 @@ class Instrument:
 
             self.frame_count = 0
 
-            if fullscreen:
+            if constants.FULLSCREEN:
                 self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
             else:
                 self.screen = pygame.display.set_mode((400, 400))
@@ -97,11 +97,13 @@ class Instrument:
             self.screen, anchor_intervals_pressed
         )
         self.instrument_visualizer.display_anchor_note(self.screen)
+        self.instrument_visualizer.display_chord_analysis(self.screen, anchor_intervals_pressed)
+        self.instrument_visualizer.display_relative_interval_collection_structure(self.screen, anchor_intervals_pressed)
 
     # also volume and stuff.
     def process_key_down(self, key, midiout):
         if key in keyboard.LAYOUT:
-            notes.start_midi_note(midiout, key)
+            midi.start_midi_note(midiout, key)
 
     def process_commands(self, midiout, keys_pressed):
         def all_pressed(keys):
@@ -116,14 +118,14 @@ class Instrument:
                 if keys_pressed[key]:
                     constants.ANCHOR_NOTE = i
         elif all_pressed([self.command_key, pygame.K_s]):
-            notes.enable_sustain(midiout)
+            midi.enable_sustain(midiout)
         elif all_pressed([self.command_key, pygame.K_m]):
-            notes.disable_sustain(midiout)
+            midi.disable_sustain(midiout)
 
     def process_key_up(self, key: pygame.key, midiout) -> None:
 
         if key in keyboard.LAYOUT:
-            notes.end_midi_note(midiout, key)
+            midi.end_midi_note(midiout, key)
 
     def process_transposition(self, keys_pressed) -> None:
         if keys_pressed[pygame.K_SPACE]:

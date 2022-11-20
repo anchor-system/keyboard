@@ -1,5 +1,9 @@
+from typing import List
+
 import constants
 import pygame
+
+from anchor import analysis
 
 
 class InstrumentVisualizer:
@@ -11,12 +15,21 @@ class InstrumentVisualizer:
         text_rect = text.get_rect(center=(constants.WIDTH / 10, constants.HEIGHT / 10))
         screen.blit(text, text_rect)
 
-    def offset_interval_so_left_is_zero(self, anchor_interval):
-        """
-        This method takes an anchor interval and converts it so that
-        :param anchor_interval:
-        :return:
-        """
+    def display_chord_analysis(self, screen, anchor_intervals: List[int]):
+        interval_structure = analysis.analyze_canonical_interval_structure(anchor_intervals)
+        text = self.font.render(f"{interval_structure}", True, (255, 255, 255))
+        text_rect = text.get_rect(center=(constants.WIDTH / 2, constants.HEIGHT / 10))
+        screen.blit(text, text_rect)
+
+    def display_relative_interval_collection_structure(self, screen, anchor_intervals: List[int]):
+        for interval, interval_frequency in analysis.analyze_relative_anchor_interval_structure(anchor_intervals).items():
+            font_size = 50 + interval_frequency * 20
+            font = pygame.font.Font(None, font_size)
+            text = font.render(str(interval), True, (255, 255, 255))
+            draw_point = (constants.WIDTH/20 + interval * 100, constants.HEIGHT - (constants.HEIGHT/10))
+            text_rect = text.get_rect(center=draw_point)
+            screen.blit(text, text_rect)
+
 
     def display_anchor_intervals(self, screen, anchor_intervals) -> None:
         for anchor_interval in anchor_intervals:

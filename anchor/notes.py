@@ -21,6 +21,21 @@ import keyboard
 import constants
 import helpers
 
+INTERVAL_TO_COMPLEXITY = {
+    0: 0,
+    1: 10,
+    2: 4,
+    3: 7,
+    4: 2,
+    5: 5,
+    6: 9,
+    7: 1,
+    8: 11,
+    9: 3,
+    10: 8,
+    11: 6,
+}
+
 
 def notes_to_anchor_intervals(anchor_note: int, notes: List[int]) -> List[int]:
     """

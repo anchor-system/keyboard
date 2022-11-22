@@ -13,8 +13,8 @@ from anchor import notes
 
 class NoteVisualizer:
     def __init__(self):
-        self.scale_factor_x = constants.WIDTH / 4
-        self.scale_factor_y = constants.HEIGHT / 4
+        self.scale_factor_x = constants.WINDOW_WIDTH / 4
+        self.scale_factor_y = constants.WINDOW_HEIGHT / 4
         self.movement_speed_scale = 1 / constants.BASE_NOTE_FREQUENCY * 1 / 4
 
     def num_notes_visualized_on_x_axis(self, active_notes):
@@ -81,6 +81,6 @@ class NoteVisualizer:
         sampled_function_points = self.sample_visualization_function(
             frame_count, notes_pressed
         )
-        centered_points = list(map(helpers.center_point, sampled_function_points))
+        centered_points = list(map(screen.center_point, sampled_function_points))
         if len(centered_points) >= 2:
-            pygame.draw.lines(screen, (0, 255, 0), False, centered_points)
+            pygame.draw.lines(screen.surface, (0, 255, 0), False, centered_points)

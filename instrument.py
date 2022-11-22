@@ -3,7 +3,9 @@ import rtmidi
 import constants
 import keyboard
 import midi
+from screeninfo import get_monitors
 from anchor import notes
+from screen import Screen
 from visualizer.instrument_visualizer import InstrumentVisualizer
 
 from visualizer.note_visualizer import NoteVisualizer
@@ -27,20 +29,27 @@ class Instrument:
 
         self.command_started = False
         self.command_key = pygame.K_SPACE
+        self.option_key = pygame.K_LSHIFT
 
         if graphical_mode:
 
             self.frame_count = 0
 
-            if constants.FULLSCREEN:
-                self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+            if constants.INITIALLY_FULLSCREEN:
+                monitor = get_monitors()[0]
+                w, h = monitor.width, monitor.height
+                self.screen = Screen(pygame.display.set_mode((0, 0), pygame.FULLSCREEN), True, w, h)
             else:
-                self.screen = pygame.display.set_mode((400, 400))
+                self.screen = Screen(
+                    pygame.display.set_mode((constants.INITIAL_WINDOW_WIDTH, constants.INITIAL_WINDOW_HEIGHT), pygame.RESIZABLE),
+                    False,
+                    constants.INITIAL_WINDOW_WIDTH, constants.INITIAL_WINDOW_HEIGHT
+                                     )
 
             surface = (
                 pygame.display.get_surface()
             )  # get the surface of the current active display
-            constants.WIDTH, constants.HEIGHT = (
+            constants.WINDOW_WIDTH, constants.WINDOW_HEIGHT = (
                 surface.get_width(),
                 surface.get_height(),
             )  # create an array of surface.width and surface.height
@@ -91,7 +100,7 @@ class Instrument:
         anchor_intervals_pressed = notes.notes_to_anchor_intervals(
             constants.ANCHOR_NOTE, notes_pressed
         )
-        self.screen.fill(pygame.Color("black"))
+        self.screen.surface.fill(pygame.Color("black"))
         self.note_visualizer.draw(self.screen, self.frame_count, notes_pressed)
         self.instrument_visualizer.display_anchor_intervals(
             self.screen, anchor_intervals_pressed
@@ -99,6 +108,7 @@ class Instrument:
         self.instrument_visualizer.display_anchor_note(self.screen)
         self.instrument_visualizer.display_chord_analysis(self.screen, anchor_intervals_pressed)
         self.instrument_visualizer.display_relative_interval_collection_structure(self.screen, anchor_intervals_pressed)
+        self.instrument_visualizer.display_relative_interval_collection_complexity_score(self.screen, anchor_intervals_pressed)
 
     # also volume and stuff.
     def process_key_down(self, key, midiout):
@@ -121,6 +131,15 @@ class Instrument:
             midi.enable_sustain(midiout)
         elif all_pressed([self.command_key, pygame.K_m]):
             midi.disable_sustain(midiout)
+        elif all_pressed([self.command_key, self.option_key, pygame.K_f]):
+            pygame.display.quit()
+            pygame.display.init()
+            if self.screen.fullscreen:
+                self.screen.surface = pygame.display.set_mode((constants.WINDOW_WIDTH, constants.WINDOW_HEIGHT), pygame.RESIZABLE)
+            else:
+                self.screen.surface = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+
+            self.screen.fullscreen = not self.screen.fullscreen
 
     def process_key_up(self, key: pygame.key, midiout) -> None:
 
@@ -146,6 +165,9 @@ class Instrument:
             elif event.type == pygame.KEYUP:
                 if not keys_pressed[self.command_key]:
                     self.process_key_up(event.key, midiout)
+
+            elif event.type == pygame.VIDEORESIZE:
+                self.screen.update_resolution(event.w, event.h)
 
         command_completed = self.process_commands(midiout, keys_pressed)
 

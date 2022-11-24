@@ -17,9 +17,8 @@ If we set our anchor note to 24, then 57 has an anchor interval of 33.
 """
 from typing import List
 
-import keyboard
+from operation import keyboard
 import constants
-import helpers
 
 INTERVAL_TO_COMPLEXITY = {
     0: 0,

@@ -7,7 +7,6 @@ import functools
 import pygame
 
 import constants
-import helpers
 from anchor import notes
 
 

@@ -1,14 +1,14 @@
 import pygame
 import rtmidi
 import constants
-import keyboard
+from operation import keyboard
 import midi
 from screeninfo import get_monitors
 from anchor import notes
-from screen import Screen
-from visualizer.instrument_visualizer import InstrumentVisualizer
+from graphics.screen import Screen
+from graphics.instrument_visualizer import InstrumentVisualizer
 
-from visualizer.note_visualizer import NoteVisualizer
+from graphics.note_visualizer import NoteVisualizer
 
 
 class Instrument:

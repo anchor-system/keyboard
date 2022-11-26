@@ -58,14 +58,6 @@ def note_to_anchor_interval(anchor_note: int, note: int) -> int:
     return note - anchor_note
 
 
-def notes_pressed(keys_pressed):
-    notes = []
-    for i, key in enumerate(keyboard.LAYOUT):
-        if keys_pressed[key]:
-            notes.append((i - keyboard.NOTE_OFFSET))
-    return notes
-
-
 def note_to_frequency(note):
     return 2 ** (note / 12) * constants.BASE_NOTE_FREQUENCY
 
@@ -76,11 +68,3 @@ def note_to_midi(note):
     :return:
     """
     return note + 60
-
-
-def get_note_from_key(key_pressed):
-    key_index = keyboard.LAYOUT.index(key_pressed)
-    note = key_index - keyboard.NOTE_OFFSET + constants.ANCHOR_NOTE
-    return note
-
-

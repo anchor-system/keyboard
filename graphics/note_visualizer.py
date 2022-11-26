@@ -11,9 +11,10 @@ from anchor import notes
 
 
 class NoteVisualizer:
-    def __init__(self):
-        self.scale_factor_x = constants.WINDOW_WIDTH / 4
-        self.scale_factor_y = constants.WINDOW_HEIGHT / 4
+    def __init__(self, screen):
+        self.screen = screen
+        self.scale_factor_x = 1 / 4
+        self.scale_factor_y = 1 / 4
         self.movement_speed_scale = 1 / constants.BASE_NOTE_FREQUENCY * 1 / 4
 
     def num_notes_visualized_on_x_axis(self, active_notes):
@@ -36,7 +37,7 @@ class NoteVisualizer:
 
         def one_component_visualization_function(note_frequency, x_axis):
             return lambda t: (
-                self.scale_factor_x if x_axis else self.scale_factor_y
+                self.screen.width * self.scale_factor_x if x_axis else self.screen.height * self.scale_factor_y
             ) * math.sin(note_frequency * t * self.movement_speed_scale)
 
         for i, note in enumerate(active_notes):

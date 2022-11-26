@@ -1,4 +1,4 @@
-from anchor.notes import get_note_from_key, note_to_midi
+from anchor.notes import note_to_midi
 
 NOTE_ON_STATUS_BYTE = 0x90
 NOTE_OFF_STATUS_BYTE = 0x80
@@ -16,13 +16,11 @@ def disable_sustain(midiout):
     midiout.send_message(midi_message)
 
 
-def start_midi_note(midiout, key_pressed):
-    note = get_note_from_key(key_pressed)
+def start_midi_note(midiout, note):
     midi_note_on = [0x90, note_to_midi(note), 112]
     midiout.send_message(midi_note_on)
 
 
-def end_midi_note(midiout, key_pressed):
-    note = get_note_from_key(key_pressed)
+def end_midi_note(midiout, note):
     midi_note_off = [0x80, note_to_midi(note), 0]
     midiout.send_message(midi_note_off)

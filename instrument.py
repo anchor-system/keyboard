@@ -143,6 +143,10 @@ class Instrument:
             midi.enable_sustain(midiout)
         elif all_pressed([self.command_key, pygame.K_m]):
             midi.disable_sustain(midiout)
+        elif all_pressed([self.command_key, pygame.K_v]):
+            for i, key in enumerate(self.keyboard.TOP_ROW):
+                if keys_pressed[key]:
+                    midi.BASE_VELOCITY = midi.MAX_VELOCITY / len(self.keyboard.TOP_ROW) * (i + 1)
         elif all_pressed([self.command_key, self.option_key, pygame.K_f]):
             pygame.display.quit()
             pygame.display.init()

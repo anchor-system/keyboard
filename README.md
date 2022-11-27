@@ -49,3 +49,8 @@ into anchorIntervals by first knowing what each Note each
 key on the keyboard maps to, then converting that note an
 anchorInterval using the anchor note.
 
+
+TODO 
+
+remove the anchor intervals below the top one and incorporate colors to show against root and ones measured internally.
+

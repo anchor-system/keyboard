@@ -23,7 +23,7 @@ class Instrument:
 
         pygame.init()
 
-        self.midi_port = 0
+        self.midi_port = 1
         self.midiout = self.initialize_midi()
 
         self.keyboard = Keyboard()

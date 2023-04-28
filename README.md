@@ -1,56 +1,20 @@
 # keyboard
 
-At the end of the day this program has to create
-actual notes so that they can be output through
-midi. 
+This program is designed to be a replacement for an instrument, it has the same polyphonic capabilities as a piano.
+When paired with an n-key rollover keyboard, then it allows for more complex chords to be played.
 
-The way we play notes is through the anchor system
-which allows us to refer to notes through representations
-which aren't the notes themselves.
+The layout is designed to be as easy to learn as possible by simply incrementing semitones as we move from left to right
+across the keyboard, moving up a row goes up an octave as well.
 
-We would like to visualize some information as well.
+## Output
 
-We want to have a visualizer which operates on midi note
-out events pretty much so it's decoupled from the instrument.
+This program opens a midi port and sends out midi commands based on what keys are currently being pressed. Personally 
+I connect this to loopmidi and then connect that to pianoteq which gives a nice sound.
 
-We want to also have a visualier which operates at 
-at the level of the anchor system which will help us
-learn from the system.
+## Commands
 
-We would firstly like to visualize the anchor interval
-which is being played at any moment in time, therefore
-this is not a midi visualizer.
+Transposing on regular instruments is usually not a simple process, in so far that it becomes a recognized
+skill amongst musicians. Since this program is not bound too heavily by physical restraints, then we make transposing simple.
 
-This should be built into the device since it allows 
-you to learn from the instrument faster and in a better way.
-
-The anchor system visualizer should operate as follows.
-
-visualize every note that is currently being played
-
-visualize the intervallic structure if more than one note
-is being played.
-
-visualize the most recent notes played in the last 30 
-seconds or within some interval.
-
-display what the anchor note is.
-
-potentially display chord names in standard so they 
-can understand?
-
-AnchorNote should be a class which contains two numbers.
-
-We first start keys_pressed which allows us to query if a 
-key is being pressed. 
-
-Given a colleciton of pressed keys, that may be turned 
-into anchorIntervals by first knowing what each Note each
-key on the keyboard maps to, then converting that note an
-anchorInterval using the anchor note.
-
-
-TODO 
-
-remove the anchor intervals below the top one and incorporate colors to show against root and ones measured internally.
-
+To transpose, simply hold `space+t` and then select the root on the number row of the keyboard. With this command it means
+that we simply just figure out what the new key is, transpose the instrument and play regularly.

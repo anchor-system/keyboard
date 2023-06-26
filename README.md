@@ -13,8 +13,23 @@ I connect this to loopmidi and then connect that to pianoteq which gives a nice 
 
 ## Commands
 
+### Transposing
+
 Transposing on regular instruments is usually not a simple process, in so far that it becomes a recognized
 skill amongst musicians. Since this program is not bound too heavily by physical restraints, then we make transposing simple.
 
 To transpose, simply hold `space+t` and then select the root on the number row of the keyboard. With this command it means
 that we simply just figure out what the new key is, transpose the instrument and play regularly.
+
+### Changing the octave row
+
+`space+r`
+
+### Sustain mode
+
+enable: `space+s`
+disable: `space+m`
+
+### Increase/Decrease midi velocity
+
+`space+v` + `any top row button in increasing velocity`

@@ -130,6 +130,8 @@ class Instrument:
             for i, key in enumerate(self.keyboard.TOP_ROW):
                 if keys_pressed[key]:
                     constants.ANCHOR_NOTE = i
+        # elif all_pressed([self.command_key, pygame.K.b]): # bass mode
+        #
         elif all_pressed([self.command_key, pygame.K_r]):
             if keys_pressed[pygame.K_ESCAPE]:
                 self.keyboard.set_base_key_row(0)

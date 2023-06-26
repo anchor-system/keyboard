@@ -33,3 +33,11 @@ disable: `space+m`
 ### Increase/Decrease midi velocity
 
 `space+v` + `any top row button in increasing velocity`
+
+### Toggle fullscreen
+
+`space+shift+f`
+
+### Quit
+
+`space+shift+q`

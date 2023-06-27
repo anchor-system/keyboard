@@ -6,6 +6,13 @@ When paired with an n-key rollover keyboard, then it allows for more complex cho
 The layout is designed to be as easy to learn as possible by simply incrementing semitones as we move from left to right
 across the keyboard, moving up a row goes up an octave as well.
 
+## Installation and Usage
+
+Firstly you'll need a virtual midi loopback software, I recommend https://www.tobias-erichsen.de/software/loopmidi.html,
+make sure this program is running and you have created a loopback midi port.
+
+To install the program, simply clone this project and run main.py after installing the necessary requirements.
+
 ## Output
 
 This program opens a midi port and sends out midi commands based on what keys are currently being pressed. Personally 

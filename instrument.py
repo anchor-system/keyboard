@@ -26,7 +26,7 @@ class Instrument:
         self.midi_port = 1
         self.midiout = self.initialize_midi()
 
-        self.keyboard = Keyboard()
+        self.keyboard = Keyboard(True)
 
         self.pressed_keys = []
 
@@ -50,6 +50,7 @@ class Instrument:
                     False,
                     constants.INITIAL_WINDOW_WIDTH, constants.INITIAL_WINDOW_HEIGHT
                                      )
+            pygame.display.set_caption('Anchor Keyboard (cuppajoeman.com)')
 
             surface = (
                 pygame.display.get_surface()

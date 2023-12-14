@@ -5,25 +5,26 @@ import pygame
 import constants
 
 class Keyboard:
-    def __init__(self):
-
-        # ESCAPE_AND_CAPS_SWAPPED = True
-        self.ESCAPE_AND_CAPS_SWAPPED = False
-        self.ESCAPE_AND_TILDE_SWAPPED = False
-
-        if self.ESCAPE_AND_TILDE_SWAPPED:
-            top_left_key = pygame.K_BACKQUOTE
-        else:
-            top_left_key = pygame.K_ESCAPE
+    def __init__(self, escape_and_caps_swapped: bool = False):
+        self.escape_and_caps_swapped = escape_and_caps_swapped
+        self.initialize_keyboard_layout()
 
 
+    def initialize_keyboard_layout(self):
+        """
+        precondition:
+            escape_and_caps_swapped is already initialized to a boolean value
+
+        description: 
+            sets up a pygame key mapping for the current keyboard
+
+        """
 
         # We want Caps Lock to be our starting point, so we'll map Caps Lock to 0, then we'll use
         # distance to caps lock to produce an offset to the note C4.
 
         self.TOP_ROW = [
-            top_left_key,
-            # pygame.K_CAPSLOCK if self.ESCAPE_AND_CAPS_SWAPPED else pygame.K_ESCAPE,
+            pygame.K_BACKQUOTE,
             pygame.K_1,
             pygame.K_2,
             pygame.K_3,
@@ -53,7 +54,7 @@ class Keyboard:
         ]
 
         self.CAPS_ROW = [
-            pygame.K_ESCAPE if self.ESCAPE_AND_CAPS_SWAPPED else pygame.K_CAPSLOCK,
+            pygame.K_ESCAPE if self.escape_and_caps_swapped else pygame.K_CAPSLOCK,
             pygame.K_a,
             pygame.K_s,
             pygame.K_d,
@@ -92,6 +93,7 @@ class Keyboard:
         # The base key is the "origin"
         self.BASE_KEY = pygame.K_TAB
         self.BASE_KEY_LAYOUT_INDEX = 24
+
 
 
     def set_base_key_row(self, row_choice: int):
